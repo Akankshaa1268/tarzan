@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import { useTheme } from "./App";
 
 // ─── TRACK DEFINITIONS (normalized 0-1 coordinates, scaled to canvas) ────────
 const TRACKS = {
@@ -127,9 +128,15 @@ const css = `
   @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;600;700;800;900&family=Share+Tech+Mono&display=swap');
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
   :root{
+    --font:'Barlow Condensed',sans-serif;--mono:'Share Tech Mono',monospace;
+  }
+  .dark-theme {
     --red:#E8002D;--bg:#060608;--card:#0d0d12;--border:rgba(255,255,255,0.07);
     --text:#f0f0f0;--muted:#666;--green:#00C897;--yellow:#FFD600;--blue:#4A9EFF;
-    --font:'Barlow Condensed',sans-serif;--mono:'Share Tech Mono',monospace;
+  }
+  .light-theme {
+    --red:#0066ff;--bg:#ffffff;--card:#f8f9fa;--border:rgba(0,0,0,0.08);
+    --text:#1a1a1a;--muted:#666;--green:#2b8a3e;--yellow:#fcc419;--blue:#0066ff;
   }
   html,body,#root{height:100%;background:var(--bg);color:var(--text);font-family:var(--font);overflow:hidden}
   ::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:var(--red)}
@@ -406,6 +413,7 @@ const css = `
 
 // ─── MAIN SIMULATOR ───────────────────────────────────────────────────────────
 export default function F1Simulator() {
+  const { theme } = useTheme();
   // Setup
   const [phase, setPhase] = useState("setup"); // setup | racing | results
   const [selectedTrack, setSelectedTrack] = useState("Monaco");

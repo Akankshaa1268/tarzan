@@ -1,7 +1,30 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, createContext, useContext } from "react";
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 
 import F1Simulator from './F1Simulator';
+
+const ThemeContext = createContext();
+
+export function ThemeProvider({ children }) {
+  const [theme, setTheme] = useState(localStorage.getItem("theme") || "dark");
+
+  useEffect(() => {
+    localStorage.setItem("theme", theme);
+    document.documentElement.className = theme === "dark" ? "dark-theme" : "light-theme";
+  }, [theme]);
+
+  const toggleTheme = () => setTheme(prev => prev === "dark" ? "light" : "dark");
+
+  return (
+    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+      {children}
+    </ThemeContext.Provider>
+  );
+}
+
+export function useTheme() {
+  return useContext(ThemeContext);
+}
 
 // ─── MOCK DATA ────────────────────────────────────────────────────────────────
 const SEASONS = [2024, 2023, 2022, 2021, 2020];
@@ -72,24 +95,51 @@ const css = `
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
+    --font-display: 'Barlow Condensed', sans-serif;
+    --font-body: 'Barlow', sans-serif;
+    --font-mono: 'Share Tech Mono', monospace;
+  }
+
+  .dark-theme {
     --red: #E8002D;
     --red-dark: #b0001f;
-    --red-glow: rgba(232,0,45,0.3);
+    --red-rgb: 232, 0, 45;
+    --red-glow: rgba(232, 0, 45, 0.3);
     --bg: #080808;
     --bg-card: #0f0f0f;
     --bg-elevated: #161616;
     --bg-hover: #1e1e1e;
-    --border: rgba(255,255,255,0.06);
-    --border-bright: rgba(255,255,255,0.12);
+    --border: rgba(255, 255, 255, 0.06);
+    --border-bright: rgba(255, 255, 255, 0.12);
     --text: #f0f0f0;
     --text-muted: #888;
     --text-faint: #444;
     --yellow: #FFD700;
+    --yellow-rgb: 255, 215, 0;
     --green: #00C897;
+    --green-rgb: 0, 200, 151;
     --blue: #4A9EFF;
-    --font-display: 'Barlow Condensed', sans-serif;
-    --font-body: 'Barlow', sans-serif;
-    --font-mono: 'Share Tech Mono', monospace;
+  }
+
+  .light-theme {
+    --red: #0066ff; /* Primary accent is Blue in light mode */
+    --red-dark: #0052cc;
+    --red-rgb: 0, 102, 255;
+    --red-glow: rgba(0, 102, 255, 0.15);
+    --bg: #ffffff;
+    --bg-card: #f8f9fa;
+    --bg-elevated: #f1f3f5;
+    --bg-hover: #e9ecef;
+    --border: rgba(0, 0, 0, 0.08);
+    --border-bright: rgba(0, 0, 0, 0.15);
+    --text: #1a1a1a;
+    --text-muted: #666;
+    --text-faint: #adb5bd;
+    --yellow: #fcc419;
+    --yellow-rgb: 252, 196, 25;
+    --green: #2b8a3e;
+    --green-rgb: 43, 138, 62;
+    --blue: #0066ff;
   }
 
   html { scroll-behavior: smooth; }
@@ -161,6 +211,32 @@ const css = `
     cursor: pointer; transition: all 0.2s;
   }
   .nav-cta:hover { background: #ff1a45; box-shadow: 0 4px 20px var(--red-glow); }
+
+  /* THEME TOGGLE */
+  .theme-toggle {
+    display: flex; align-items: center; gap: 8px;
+    margin-right: 16px; padding: 4px 10px;
+    border-radius: 100px; background: var(--bg-card);
+    border: 1px solid var(--border); cursor: pointer;
+    transition: all 0.2s; user-select: none;
+  }
+  .theme-toggle:hover { border-color: var(--border-bright); background: var(--bg-hover); }
+  .theme-toggle-label {
+    font-family: var(--font-mono); font-size: 9px;
+    letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted);
+  }
+  .theme-toggle-switch {
+    width: 28px; height: 14px; background: var(--text-faint);
+    border-radius: 7px; position: relative; transition: background 0.3s;
+  }
+  .theme-toggle.active .theme-toggle-switch { background: var(--red); }
+  .theme-toggle-dot {
+    width: 10px; height: 10px; background: white;
+    border-radius: 50%; position: absolute; top: 2px; left: 2px;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  .theme-toggle.active .theme-toggle-dot { transform: translateX(14px); }
+
 
   /* HERO */
   .hero {
@@ -730,11 +806,19 @@ function IQRing({ score }) {
   const r = 56;
   const circ = 2 * Math.PI * r;
   const fill = (score / 100) * circ;
-  const color = score >= 85 ? "#00C897" : score >= 70 ? "#FFD700" : "#E8002D";
+  const { theme } = useTheme();
+
+  // Theme-aware colors
+  const red = theme === 'dark' ? "#E8002D" : "#0066ff"; // red color variable matches blue in light mode
+  const green = theme === 'dark' ? "#00C897" : "#2b8a3e";
+  const yellow = theme === 'dark' ? "#FFD700" : "#fcc419";
+
+  const color = score >= 85 ? green : score >= 70 ? yellow : red;
+
   return (
     <div className="iq-ring">
       <svg width="140" height="140" viewBox="0 0 140 140">
-        <circle cx="70" cy="70" r={r} fill="none" stroke="#1a1a1a" strokeWidth="10" />
+        <circle cx="70" cy="70" r={r} fill="none" stroke="var(--bg-elevated)" strokeWidth="10" />
         <circle
           cx="70" cy="70" r={r} fill="none"
           stroke={color} strokeWidth="10"
@@ -743,21 +827,22 @@ function IQRing({ score }) {
           style={{ transition: "stroke-dasharray 1.2s ease-out" }}
         />
       </svg>
-      <div className="iq-number">{score}<br /><span style={{ fontSize: 14, color: "#888", fontWeight: 400 }}>IQ</span></div>
+      <div className="iq-number">{score}<br /><span style={{ fontSize: 14, color: "var(--text-muted)", fontWeight: 400 }}>IQ</span></div>
     </div>
   );
 }
 
 function WaterfallChart({ data, animate }) {
   const max = Math.max(...data.map(d => Math.abs(d.value)));
+  const { theme } = useTheme();
+
   return (
     <div className="waterfall">
       {data.map((item, i) => {
         const val = Math.abs(item.value);
         const pct = (val / max) * 100;
         const baseColor = item.total ? "var(--yellow)" : item.value > 0 ? "var(--green)" : "var(--red)";
-        const darkColor = item.total ? "#B8860B" : item.value > 0 ? "#006400" : "var(--red-dark)";
-        const glowColor = item.total ? "rgba(255,215,0,0.2)" : item.value > 0 ? "rgba(0,200,151,0.2)" : "rgba(232,0,45,0.2)";
+        const glowColor = item.total ? "rgba(var(--yellow-rgb), 0.2)" : item.value > 0 ? "rgba(var(--green-rgb), 0.2)" : "rgba(var(--red-rgb), 0.2)";
 
         return (
           <div key={i} className={`waterfall-bar-row fade-up`} style={{ animationDelay: `${i * 0.1}s`, marginBottom: item.total ? 0 : 10, marginTop: item.total ? 12 : 0 }}>
@@ -770,14 +855,14 @@ function WaterfallChart({ data, animate }) {
             </div>
             <div className="waterfall-track" style={{
               height: item.total ? 36 : 24,
-              background: "rgba(255,255,255,0.03)",
+              background: "var(--bg-elevated)",
               borderTop: item.total ? "1px solid var(--border-bright)" : "none"
             }}>
               <div
                 className="waterfall-fill"
                 style={{
                   width: animate ? `${pct}%` : "0%",
-                  background: `linear-gradient(90deg, ${darkColor}, ${baseColor})`,
+                  background: baseColor,
                   boxShadow: animate && pct > 5 ? `0 0 15px ${glowColor}` : "none",
                   transition: `width 1.5s cubic-bezier(0.19, 1, 0.22, 1) ${i * 0.1}s`,
                   height: "100%"
@@ -786,7 +871,8 @@ function WaterfallChart({ data, animate }) {
                 <span className="waterfall-fill-text" style={{
                   fontSize: item.total ? 13 : 11,
                   fontWeight: 700,
-                  textShadow: "0 1px 2px rgba(0,0,0,0.5)"
+                  color: theme === 'dark' || item.total ? '#fff' : 'rgba(255,255,255,0.9)',
+                  textShadow: "0 1px 2px rgba(0,0,0,0.3)"
                 }}>
                   {item.value}s
                 </span>
@@ -800,6 +886,7 @@ function WaterfallChart({ data, animate }) {
 }
 
 function Heatmap({ title, data }) {
+  const { theme } = useTheme();
   return (
     <div>
       <div className="card-label">{title}</div>
@@ -809,8 +896,8 @@ function Heatmap({ title, data }) {
             key={i}
             className="heatmap-cell"
             style={{
-              background: `rgba(232,0,45,${v})`,
-              border: `1px solid rgba(232,0,45,${Math.min(v + 0.1, 1)})`,
+              background: `rgba(var(--red-rgb), ${v})`,
+              border: `1px solid rgba(var(--red-rgb), ${Math.min(v + 0.1, 1)})`,
             }}
             title={`Decision ${i + 1}: ${(v * 100).toFixed(0)}% optimal`}
           />
@@ -819,6 +906,7 @@ function Heatmap({ title, data }) {
     </div>
   );
 }
+
 
 function Toast({ toasts }) {
   return (
@@ -993,6 +1081,7 @@ function RaceAutopsy({ user, addToast, setShowAuth }) {
   const [result, setResult] = useState(null);
   const [animate, setAnimate] = useState(false);
   const [tab, setTab] = useState("overview");
+  const { theme } = useTheme();
 
   const analyse = async () => {
     if (!gp || !driver) { addToast("Select a Grand Prix and driver", "error"); return; }
@@ -1023,8 +1112,12 @@ function RaceAutopsy({ user, addToast, setShowAuth }) {
     { label: "Strategy Error", value: parseFloat(result.strategyError) },
     { label: "Car Pace Deficit", value: parseFloat(result.carPace) },
     { label: "Incident Impact", value: parseFloat(result.incidentImpact) },
-    { label: "TOTAL TIME LOST", value: -result.totalLoss, total: true },
+    { label: "TOTAL LOSS", value: -result.totalLoss, total: true },
   ] : [];
+
+  const pieColors = theme === 'dark'
+    ? ["#E8002D", "#FF8700", "#FFD000", "#00D2BE", "#4A9EFF", "#A259FF"]
+    : ["#0066ff", "#ff922b", "#fab005", "#12b886", "#228be6", "#7950f2"];
 
   return (
     <div className="page">
@@ -1195,7 +1288,7 @@ function RaceAutopsy({ user, addToast, setShowAuth }) {
                             stroke="none"
                             label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
                           >
-                            {["#E8002D", "#FF8700", "#FFD000", "#00D2BE", "#4A9EFF", "#A259FF"].map((color, index) => (
+                            {pieColors.map((color, index) => (
                               <Cell key={`cell-${index}`} fill={color} />
                             ))}
                           </Pie>
@@ -1237,7 +1330,7 @@ function RaceAutopsy({ user, addToast, setShowAuth }) {
                             tickLine={false}
                           />
                           <Tooltip
-                            cursor={{ fill: 'rgba(255,255,255,0.05)' }}
+                            cursor={{ fill: 'rgba(var(--red-rgb), 0.05)' }}
                             contentStyle={{ backgroundColor: 'var(--bg-elevated)', border: '1px solid var(--border)', borderRadius: '4px', fontFamily: 'var(--font-mono)', fontSize: '12px' }}
                             itemStyle={{ color: 'var(--red)' }}
                             formatter={(value) => [`${value}s`, 'Time Lost']}
@@ -2015,12 +2108,13 @@ function AuthModal({ mode, setMode, onClose, onLogin }) {
 }
 
 // ─── APP ─────────────────────────────────────────────────────────────────────
-export default function App() {
+function AppContent() {
   const [page, setPage] = useState("home");
   const [user, setUser] = useState(null);
   const [showAuth, setShowAuth] = useState(false);
   const [authMode, setAuthMode] = useState("login");
   const [toasts, setToasts] = useState([]);
+  const { theme, toggleTheme } = useTheme();
 
   const addToast = useCallback((message, type = "info") => {
     const id = Date.now();
@@ -2058,18 +2152,28 @@ export default function App() {
             </button>
           ))}
         </div>
-        {user ? (
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            {user.isPro && <span className="pro-badge">⚡ PRO</span>}
-            <div style={{ fontFamily: "var(--font-display)", fontSize: 13, fontWeight: 700, cursor: "pointer", padding: "4px 10px", border: "1px solid var(--border)", borderRadius: 4 }} onClick={() => setUser(null)}>
-              {user.name}
+
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <div className={`theme-toggle ${theme === 'light' ? 'active' : ''}`} onClick={toggleTheme}>
+            <span className="theme-toggle-label">{theme === 'dark' ? 'Dark' : 'Light'}</span>
+            <div className="theme-toggle-switch">
+              <div className="theme-toggle-dot" />
             </div>
           </div>
-        ) : (
-          <button className="nav-cta" onClick={() => { setAuthMode("login"); setShowAuth(true); }}>
-            Sign In
-          </button>
-        )}
+
+          {user ? (
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              {user.isPro && <span className="pro-badge">⚡ PRO</span>}
+              <div style={{ fontFamily: "var(--font-display)", fontSize: 13, fontWeight: 700, cursor: "pointer", padding: "4px 10px", border: "1px solid var(--border)", borderRadius: 4 }} onClick={() => setUser(null)}>
+                {user.name}
+              </div>
+            </div>
+          ) : (
+            <button className="nav-cta" onClick={() => { setAuthMode("login"); setShowAuth(true); }}>
+              Sign In
+            </button>
+          )}
+        </div>
       </nav>
 
       {page === "home" && <Landing setPage={setPage} />}
@@ -2089,3 +2193,12 @@ export default function App() {
     </>
   );
 }
+
+export default function App() {
+  return (
+    <ThemeProvider>
+      <AppContent />
+    </ThemeProvider>
+  );
+}
+
