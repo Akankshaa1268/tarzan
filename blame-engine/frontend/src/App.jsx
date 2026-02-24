@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback, createContext, useContext } f
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 
 import F1Simulator from './F1Simulator';
-
+import News from "./news";
 const ThemeContext = createContext();
 
 export function ThemeProvider({ children }) {
@@ -2133,6 +2133,7 @@ function AppContent() {
     { id: "simulator", label: "Strategist" },
     { id: "leaderboard", label: "Leaderboard" },
     { id: "teams", label: "For Teams" },
+    {id: "news", label: "WHAT'S NEW" },
   ];
 
   return (
@@ -2181,7 +2182,7 @@ function AppContent() {
       {page === "simulator" && <F1Simulator />}
       {page === "leaderboard" && <Leaderboard />}
       {page === "teams" && <TeamDashboard user={user} setShowAuth={() => setShowAuth(true)} />}
-
+      {page === "news" && <News />}
       {showAuth && (
         <AuthModal
           mode={authMode}
