@@ -974,7 +974,7 @@ function Landing({ setPage }) {
 
       {/* FEATURES */}
       <div className="section">
-        <div className="section-label">// CORE FEATURES</div>
+        
         <h2 className="section-title">Built for the <span style={{ color: "var(--red)" }}>obsessed</span></h2>
         <div className="grid-3">
           {[
@@ -1028,7 +1028,7 @@ function Landing({ setPage }) {
 
       {/* HOW IT WORKS */}
       <div className="section">
-        <div className="section-label">// HOW IT WORKS</div>
+        
         <h2 className="section-title">Real data. <span style={{ color: "var(--red)" }}>Real analysis.</span></h2>
         <div className="grid-2">
           <div>
@@ -1122,7 +1122,7 @@ function RaceAutopsy({ user, addToast, setShowAuth }) {
   return (
     <div className="page">
       <div className="section">
-        <div className="section-label">// RACE AUTOPSY</div>
+        
         <h2 className="section-title">Where did the <span style={{ color: "var(--red)" }}>time go?</span></h2>
 
         {/* SELECTOR */}
@@ -1537,7 +1537,7 @@ function Simulator({ user, addToast, setShowAuth }) {
     return (
       <div className="page">
         <div className="section">
-          <div className="section-label">// RACE RESULT</div>
+          
           <h2 className="section-title">How did you <span style={{ color: "var(--red)" }}>compare?</span></h2>
           <div className="grid-2" style={{ marginBottom: 32 }}>
             <div className="card" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
@@ -1602,7 +1602,7 @@ function Simulator({ user, addToast, setShowAuth }) {
         <div className="section">
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20, flexWrap: "wrap", gap: 12 }}>
             <div>
-              <div className="section-label">// LIVE SIMULATION</div>
+              
               <h2 style={{ fontFamily: "var(--font-display)", fontSize: 28, fontWeight: 900, textTransform: "uppercase" }}>
                 {DRIVERS.find(d => d.id === setup.driver)?.name || "Driver"}
               </h2>
@@ -1721,7 +1721,7 @@ function Simulator({ user, addToast, setShowAuth }) {
   return (
     <div className="page">
       <div className="section">
-        <div className="section-label">// BE THE STRATEGIST</div>
+        
         <h2 className="section-title">You're on the <span style={{ color: "var(--red)" }}>pit wall.</span></h2>
         <div className="grid-2">
           <div>
@@ -1814,7 +1814,7 @@ function Leaderboard() {
   return (
     <div className="page">
       <div className="section">
-        <div className="section-label">// GLOBAL LEADERBOARD</div>
+        
         <h2 className="section-title">Strategy <span style={{ color: "var(--red)" }}>Intelligence</span> Rankings</h2>
         <div style={{ display: "flex", gap: 8, marginBottom: 24, flexWrap: "wrap" }}>
           {["all", "week", "month", "monaco", "spa", "suzuka"].map(f => (
@@ -1913,7 +1913,7 @@ function TeamDashboard({ user, setShowAuth }) {
     <div className="page">
       <div className="section">
         <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
-          <div className="section-label" style={{ marginBottom: 0 }}>// PROFESSIONAL TEAM DASHBOARD</div>
+          
           <div className="pro-badge">⚡ PRO</div>
         </div>
         <h2 className="section-title">Intelligence <span style={{ color: "var(--red)" }}>Command</span></h2>
