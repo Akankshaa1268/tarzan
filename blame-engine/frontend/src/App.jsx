@@ -938,8 +938,8 @@ function Landing({ setPage }) {
           </div>
           <h1 className="hero-title fade-up delay-1">
             THE<br />
-            <span className="red">BLAME</span><br />
-            ENGINE
+            <span className="red">TARZAN</span><br />
+            
           </h1>
           <p className="hero-subtitle fade-up delay-2">
             The first F1 platform where <strong>fans generate intelligence teams actually need.</strong>{" "}
@@ -1063,11 +1063,11 @@ function Landing({ setPage }) {
       </div>
 
       <footer className="footer">
-        <div className="footer-logo">BLAME<span style={{ color: "var(--red)" }}>ENGINE</span></div>
+        <div className="footer-logo"><span style={{ color: "var(--red)" }}>TARZAN</span></div>
         <div className="footer-links">
           {["API Docs", "Architecture", "GitHub", "Privacy", "Terms"].map(l => <div key={l} className="footer-link">{l}</div>)}
         </div>
-        <div className="footer-copy">© 2025 BlameEngine. Data: FastF1, Ergast API, OpenF1.</div>
+        <div className="footer-copy">© 2025 Tarzan. Data: FastF1, Ergast API, OpenF1.</div>
       </footer>
     </div>
   );
@@ -2076,7 +2076,7 @@ function AuthModal({ mode, setMode, onClose, onLogin }) {
     <div className="auth-modal" onClick={onClose}>
       <div className="auth-card" style={{ position: "relative" }} onClick={e => e.stopPropagation()}>
         <button className="auth-close" onClick={onClose}>✕</button>
-        <div className="auth-title">{mode === "login" ? "Sign In" : "Join BlameEngine"}</div>
+        <div className="auth-title">{mode === "login" ? "Sign In" : "Join Tarzan"}</div>
         <div className="auth-sub">{mode === "login" ? "Access your pit wall." : "Start generating intelligence."}</div>
         {mode === "signup" && (
           <div className="form-group">
@@ -2144,7 +2144,7 @@ function AppContent() {
       <nav className="nav">
         <div className="nav-logo" onClick={() => setPage("home")}>
           <div className="dot" />
-          BLAME<span>ENGINE</span>
+          <span>TARZAN</span>
         </div>
         <div className="nav-links">
           {navItems.map(item => (
